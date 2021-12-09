@@ -1,0 +1,171 @@
+class Node {
+    constructor(value) {
+        this.data = value;
+        this.next = null;
+    }
+}
+
+/**
+ * Class to represent a queue using a Linked List to store the queued items.
+ * Follows a FIFO (First In First Out) order where new items are added to the
+ * back and items are removed from the front.
+ */
+class LinkedListQueue {
+    /**
+     * The constructor is executed when instantiating a new LinkedListQueue() to construct
+     * a new instance.
+     * @returns {Queue} This new LinkedListQueue instance is returned without having to
+     *    explicitly write 'return' (implicit return).
+     */
+    constructor() {
+        this.head = null;
+        // To cut down on time complexity, we can add 2 new properties:
+        this.tail = null;
+        this.length = 0;
+    }
+
+    /**
+     * Adds a new given item to the back of the queue and returns the new size of the queue
+     * - Time: O(1) - Constant
+     * - Space: O(1) - Constant
+     * @param {any} item - The item to be added to the back of the queue
+     * @returns {number} The new size of the queue
+     */
+    enqueue(item) {
+        let newItem = new Node(item);
+        // EDGE CASE: Empty?
+        if (this.isEmpty()) {
+            this.head = newItem;
+        } else {   // Since we're using a tail, let's set the tail's next node to be our newly created item
+            this.tail.next = newItem;
+        }
+        // Then, set the tail as the new item
+        this.tail = newItem;
+        // And increment our length before returning it
+        this.length++;
+        return this.length;
+    }
+    
+    }
+
+
+    dequeue() {
+        // Edge Cases: 
+        //  1. Empty queue
+        //  2. Only 1 item in the queue
+        if (this.isEmpty()) {
+            // this is just in case somebody's been messing with our data structure
+            this.length = 0;
+            // and return undefined
+            return undefined;
+        } else if (this.length == 1) { // If the queue only contains 1 item
+            // hold onto the current head
+            let removed = this.head;
+            // set both the head and tail to null (because removing the only item means emptying the queue)
+            this.head = null;
+            this.tail = null;
+            // set the length to 0
+            this.length = 0;
+            // and return the removed item's data
+            return removed.data;
+        }
+
+        // hold onto the current head before removing it
+        let removed = this.head;
+        // set the head to the 2nd item
+        this.head = removed.next;
+        // decrement our length
+        this.length--;
+        // remove the removed node's reference to any other item
+        removed.next = null;
+        // and return its data
+        return removed.data;
+    }
+    // allow LinkedList to be viewed as an array for ease of 
+    // troubleshooting inside of console
+    toArr() {
+        const arr = [];
+        let runner = this.head;
+
+        while (runner) {
+            arr.push(runner.data);
+            runner = runner.next;
+        }
+        return arr;
+    }
+
+
+
+    /**
+     * Determines whether the sum of the left half of the queue items is equal to
+     * the sum of the right half. Avoid indexing the queue items directly via
+     * bracket notation, and avoid iterating through using a runner. Instead, use the queue 
+     * methods for practice. Use no extra array or objects.
+     * The queue should be returned to its original order when done.
+     * - Time: O(?).
+     * - Space: O(?).
+     * @returns {boolean} Whether the sum of the left and right halves is equal.
+     */
+    isSumOfHalvesEqual() {
+        // Check to see if queue is empty
+        if(this.length < 1){
+            return false
+        }
+        // Check to see if queue has only one node
+        if(this.length == 1){
+            return false
+        }
+        // Create variable to keep track of the sums
+        // of the two halves and the node that we
+        // are removing from the queue to create our sums
+        let firstSum = 0
+        let secondSum = 0
+        let inject = 0
+        // Loop through the queue
+        for (let i = 0; i < this.length; i++){
+                // if we are iterating through
+                // the first half
+                if(i < this.length / 2){
+                    inject = this.dequeue()
+                    firstSum += inject
+                    this.enqueue(inject)
+                }
+                // if we are iterating through
+                // the second half
+                if(i >= this.length / 2){
+                    inject = this.dequeue()
+                    secondSum += inject
+                    this.enqueue(inject)
+                }
+        }
+        // Return a boolean that states 
+        // whether the two halves equal 
+        // one another
+        return firstSum == secondSum
+    }
+}
+
+testQ1 = new LinkedListQueue();
+testQ1.enqueue(2)
+testQ1.enqueue(2)
+testQ1.enqueue(2)
+testQ1.enqueue(2)
+testQ1.enqueue(2)
+console.log(testQ1.toArr())
+console.log(testQ1.isSumOfHalvesEqual())
+
+
+
+testQ2 = new LinkedListQueue()
+testQ2.enqueue(2);
+testQ2.enqueue(2);
+testQ2.enqueue(2);
+testQ2.enqueue(2);
+console.log(testQ2.toArr())
+console.log(testQ2.isSumOfHalvesEqual());
+
+// Console reads 
+// [ 2, 2, 2, 2, 2 ]
+// false
+// [ 2, 2, 2, 2 ]
+// true
